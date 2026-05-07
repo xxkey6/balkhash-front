@@ -1,0 +1,7 @@
+[
+  { "index": 0, "name": "other", "src": "/img/other.png" },
+  { "index": 1, "name": "cotton", "src": "/img/cotton.png" },
+  { "index": 2, "name": "corn", "src": "/img/corn.png" },
+  { "index": 3, "name": "wheat", "src": "/img/wheat.png" },
+  { "index": 4, "name": "vegetable", "src": "/img/vegetable.png" }
+]
