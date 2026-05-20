@@ -5,7 +5,8 @@
       <span class="span" style="color: rgb(75, 112, 125)">CLICK TO TOGGLE VISIBILITY</span>
     </div>
     <div class="landUse_p2" id="landUse_p2">
-      <div id="legend-container" class="legend-container" ref="topoContent">
+      
+      <!-- <div id="legend-container" class="legend-container" ref="topoContent">
         <div
           class="legend-item clicked"
           v-for="item in topoInfo"
@@ -13,7 +14,7 @@
           @click="clickItem(item.index)"
         >
         
-          <!-- 地理要素图标 -->
+          
           <div class="topo-icon-wrapper">
             <div class="topo-icon" :data-type="item.description">
               {{ getIconEmoji(item.description) }}
@@ -22,7 +23,8 @@
           <span style="font-size: 20px; padding: 8px">{{ item.name }}</span>
           
         </div>
-      </div>
+      </div> -->
+
     </div>
   </div>
 </template>
@@ -39,8 +41,13 @@ let pageInstance = getCurrentInstance();
 let store = useMapStore();
 
 // 初始化：移除相关图层并获取地形图数据
-store.removeTopoLayers();
-store.getTopoInfo();
+import { onMounted } from 'vue'
+
+// 初始化：移除相关图层并获取地形图数据（在挂载后执行，避免在 setup 期间操作尚未初始化的 map）
+onMounted(()=>{
+  // store.removeTopoLayers();
+  // store.getTopoInfo();
+})
 
 // 从 store 获取地形图信息
 const { topoInfo } = storeToRefs(store);
@@ -69,6 +76,8 @@ const clickItem = (index) => {
     clickedItem.value = -1;
     // 加载所有地形图层
     store.loadTopo(topoInfo.value);
+    // 清空 store 中的当前地形要素（3D 显示默认底图）
+    store.setCurrentTopo('');
   } else {
     // 取消所有要素的选中状态
     for (let i = 0; i < topoInfo.value.length; i++) {
@@ -79,6 +88,15 @@ const clickItem = (index) => {
     clickedItem.value = index;
     // 加载单个地形图层
     store.loadTopo([topoInfo.value[index]]);
+    // 将选中的地形要素写入 store，供 3D 组件切换底图使用
+    store.setCurrentTopo(topoInfo.value[index].description);
+  }
+};
+
+// 当取消选中时，确保 store 中的 currentTopo 也被清空（显示全部）
+const clearSelection = () => {
+  if (clickedItem.value === -1) {
+    store.setCurrentTopo('');
   }
 };
 </script>

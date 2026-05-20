@@ -7,8 +7,8 @@ const router =  createRouter({
     routes:[
         { // 地块分类
             name:'landCover',
-            path:'',
-            redirect:{name:'timeSeriesData'},
+            path:'/',
+            redirect: {name:'topographicMap'}, // 重定向 先默认进入topographic
             // component:()=>import('../components/land-cover.vue')
         },
         // {
@@ -40,7 +40,7 @@ const router =  createRouter({
             path:'/topographicMap',
             component:()=>import('../components/topographic-map.vue')
         },
-
+         // 水量
         {
             name:'cropWaterRequirement',
             path:'/cropWaterRequirement',

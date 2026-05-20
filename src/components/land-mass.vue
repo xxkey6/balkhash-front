@@ -1,8 +1,8 @@
 <template>
-<div id="bottom_right">
-<!--<land-color/>-->
-  <land-imagery/>
-</div>
+  <div id="bottom_right">
+  <!-- <land-color/> -->
+    <!-- <land-imagery/> -->
+  </div>
 </template>
 
 <script setup>
@@ -11,6 +11,7 @@ import LandImagery from "@/components/part/land-imagery.vue";
 import useMapStore from "@/stores/map";
 import {storeToRefs} from "pinia";
 import {onMounted} from "vue";
+
 const store = useMapStore()
 let {map} = storeToRefs(store)
 const setMapView = () => {
@@ -20,14 +21,22 @@ const setMapView = () => {
   }
 
   const view = new View({
-    center:[(85.759192+90.764236)/2, (44.044693+44.438904)/2],
-    zoom:9,
-    projection: 'EPSG:4326'
-  })
-  map.value.setView(view)
+    center: [78.25, 45.72],
+    zoom: 7.15,
+    projection: "EPSG:4326",
+  });
+  map.value.setView(view);
+
+  store.clearMap(0)
+
+  store.addBasicLayer('World_Imagery') // 底图改为卫星图
+  store.addBasinBoundaryLayer();
+  store.addAgriParcelLayer() // 农田地块
+
+  // store.addBasinLabelLayer();
 }
 
-onMounted(setMapView)
+onMounted(setMapView);
 </script>
 
 <style scoped>
