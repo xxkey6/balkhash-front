@@ -231,12 +231,12 @@ body {
     color: darksalmon;
 }
 
-
+/* 要素按钮组的图标样式 */
 .legend-container {
-    margin-top: 3%;
+    margin-top: 8%;
     margin-left: 8%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     gap: 30px;
     justify-content: space-around;

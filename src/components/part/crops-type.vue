@@ -33,25 +33,33 @@
 import useMapStore from "@/stores/map";
 import {ref, getCurrentInstance, onMounted} from "vue";
 import {storeToRefs} from "pinia";
+
     let pageInstance = getCurrentInstance();
     let store = useMapStore()
     const {cropInfo} = storeToRefs(store)
+
+    // 初始化
     const initCropLayers = () => {
       if (!store.map || !store.map.addLayer) {
         setTimeout(initCropLayers, 50)
         return
       }
 
-      store.removeCropLayerLine()
-      store.removeAdministrativeLayer()
-      store.removeCropImageryLayers()
-      store.addCropImageryLayers()
-      store.addAdministrativeLayer();
-      store.getCropInfo();
+      store.removeCropLayerLine();
+      store.removeAdministrativeLayer();
+      store.removeCropImageryLayers();
+
+      // store.addCropImageryLayers(); // 作物底图（卫星）
+      // store.addAdministrativeLayer(); // 行政区边界
+      store.getAndLoadCropInfo(); // 获取作物info，并加载作物layer
     }
     onMounted(initCropLayers)
+
+
+    // 通过按钮组，切换作物类型
     let clickedItem = ref(-1);
     const clickItem = (index) =>{
+      console.log(index);
       if (clickedItem.value === index) {
         for (let i = 0; i < cropInfo.value.length; i++) {
           pageInstance.refs.landContent.children[i].classList.add("clicked");
@@ -69,10 +77,12 @@ import {storeToRefs} from "pinia";
         }else{
           store.loadCrop([cropInfo.value[index]]);
         }
-
       }
     }
+
+
 </script>
+
 
 <style scoped>
 .crop-color {

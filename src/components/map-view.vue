@@ -1,53 +1,49 @@
 <template>
-<div id="mapView" @wheel="handleScroll" ref="map">
-  <!-- 2D/3D 切换按钮 -->
-  <div class="dimension-toggle">
-    <button 
-      class="toggle-btn"
-      :class="{ active: is2D }"
-      @click="toggle2D3D"
-      :title="is2D ? '切换到3D视图' : '切换到2D视图'"
+  <div id="mapView" @wheel="handleScroll" ref="mapDom" class="map-container">
+
+
+    <!-- 3D 地球视图 -->
+    <div 
+      v-if="!is2D && isTopographicMapView"
+      class="cesium-overlay"
     >
-      {{ is2D ? '2D' : '3D' }}
-    </button>
+      <topographic-map-3d />
+    </div>
+
+
+    <!-- 2D/3D 切换按钮 -->
+    <div v-show="isTopographicMapView" class="dimension-toggle">
+      <button 
+        class="toggle-btn"
+        :class="{ active: is2D }"
+        @click="toggle2D3D"
+        :title="is2D ? '切换到3D视图' : '切换到2D视图'"
+      >
+        {{ is2D ? '2D' : '3D' }}
+      </button>
+    </div>
+
+
   </div>
-  <transition
-      leave-active-class="animate__animated animate__zoomOut"
-      enter-active-class="animate__animated animate__zoomIn"
-  >
-  <div class="body" v-show="store.isShowFeautureInfo">
-    <table style="border-collapse: collapse">
-      <thead>
-      <td colspan="2">要素信息</td>
-      </thead>
-      <tr>
-      <td>要素编号</td>
-      <td>{{store.featureId}}</td>
-      </tr>
-      <tr>
-        <td>覆盖类型</td>
-        <td>{{store.currentCrop}}</td>
-      </tr>
-      <tr>
-        <td>所有者</td>
-        <td>***</td>
-      </tr>
-    </table>
-  </div>
-  </transition>
-</div>
 </template>
 <script setup>
 import {storeToRefs} from "pinia";
-import {getCurrentInstance, onMounted, ref} from "vue";
+import {getCurrentInstance, onMounted, ref, computed} from "vue";
 import {Control} from "ol/control";
+import {useRoute} from "vue-router";
 import useMapStore from "@/stores/map";
+import TopographicMap3d from "@/components/topographic-map-3D.vue";
 import 'animate.css';
-const store = useMapStore()
-let {map,yearPlayer,monthPlayer,isMonthPlaying,isYearPlaying} = storeToRefs(store)
 
-// 2D/3D 切换状态
-const is2D = ref(true);
+const store = useMapStore()
+const route = useRoute()
+let {map,yearPlayer,monthPlayer,isMonthPlaying,isYearPlaying,is3D} = storeToRefs(store)
+
+// 2D/3D 切换状态，使用 store 中的 is3D 以保持开关状态在组件重建时不丢失
+const is2D = computed(() => !is3D.value)
+
+// 判断当前是否在地形图视图
+const isTopographicMapView = computed(() => route.name === 'topographicMap');
 
 // 处理滚轮事件，停止播放动画
 const handleScroll = function (){
@@ -63,17 +59,18 @@ const handleScroll = function (){
 
 // 2D/3D 切换函数
 const toggle2D3D = function() {
-  is2D.value = !is2D.value;
-  // TODO: 实现真实的2D/3D切换功能
-  // 目前仅显示按钮的切换效果
-  console.log(is2D.value ? '已切换到2D视图' : '已切换到3D视图');
+  is3D.value = !is3D.value
+  console.log(is3D.value ? '已切换到3D视图' : '已切换到2D视图');
 }
 
-let  pageInstance = getCurrentInstance()
+let pageInstance = getCurrentInstance()
   onMounted(()=>{
     let timer = {}
     store.initMap()
     store.addBasicLayer()
+    
+
+    
     let tip = document.createElement('div')
     tip.id='tip'
     tip.style='height:25px;width:60px;left:50px;top:25px;position:absolute;display:none;background-color:white;border:1px solid black;line-height:25px;text-align:center'
@@ -128,7 +125,7 @@ let  pageInstance = getCurrentInstance()
     pic3.style='height:100%;width:100%';
     hand.appendChild(pic3)
     hand.onclick=()=>{
-      pageInstance.refs.map.style.cursor='pointer'
+      pageInstance.refs.mapDom.style.cursor='pointer'
     }
     hand.onmouseover=()=>{
       timer = setTimeout(()=>{
@@ -154,12 +151,31 @@ let  pageInstance = getCurrentInstance()
     //       strokeStyle: new Stroke({color: 'rgba(12, 12, 12, 0.8)',width: 0.6}),
     //       targetSize: 100}
     // )
+
+    
   }
   )
 
 </script>
 
 <style scoped>
+/* 地图容器基础样式 */
+.map-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* 3D 地球覆盖层 */
+.cesium-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+}
+
 /* 2D/3D 切换按钮容器 */
 .dimension-toggle {
   position: absolute;
