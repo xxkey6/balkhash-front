@@ -44,10 +44,6 @@
         <b>{{ formatValue(field.blueWater) }} mm</b>
       </div>
 
-      <div class="row purple">
-        <span>Water Footprint</span>
-        <b>{{ formatValue(field.waterFootprint) }} m³/t</b>
-      </div>
     </div>
   </div>
 </template>
@@ -170,8 +166,8 @@ function formatValue(value) {
   color: #22c55e;
 }
 
-.row.purple b {
-  color: #c084fc;
+.row.purple {
+  display: none;
 }
 
 .divider {

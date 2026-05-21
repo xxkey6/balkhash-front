@@ -83,7 +83,12 @@ const useMapStore =  defineStore('map',{
             cropWaterActiveMetric:'blueWater',
             cropWaterActiveDate:'2019-04-18',
             cropWaterActiveCrop:'cotton',
+            cropWaterViewportCrop:'wheat',
+            cropWaterFocusCrop:null,
+            cropWaterFocusRequestId:0,
             cropWaterSummaryData:null,
+            cropWaterIsPlaying:false,
+            cropWaterLockViewport:false,
     }),
     actions:{
         //网络请求接口
