@@ -336,7 +336,7 @@ const demoCylinderCount = 140;
 const demoCylinderSlices = 24;
 const demoMaxCylinderHeight = 260;
 const zeroValueThreshold = 0.01;
-const labelValueThreshold = 0.01;
+const labelValueThreshold = 0;
 const cylinderTransitionMs = 12000;
 const maxConsecutiveRandomZeroDays = 3;
 const cropWaterTimelineStartDate = "2024-10-05";
@@ -1892,7 +1892,9 @@ function shouldShowCylinderBody(item) {
 }
 
 function shouldShowCylinderDisk(item) {
-  return shouldShowCylinderBody(item);
+  const targetValue = Number(item?.targetValue);
+
+  return Number.isFinite(targetValue) && targetValue >= labelValueThreshold;
 }
 
 function refreshCylinderLabelVisibility() {
